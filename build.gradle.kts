@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val javaVersion = JavaVersion.VERSION_21
@@ -41,20 +41,19 @@ tasks.withType<KotlinCompile> {
     dependsOn("ktlintCheck")
     compilerOptions {
         this.freeCompilerArgs.add("-Xjsr305=strict")
-//        this.jvmTarget.set(kotlinJVM as JvmTarget)
+        this.jvmTarget.set(kotlinJVM)
     }
 }
 
 tasks.register<JavaExec>("cucumber") {
     group = "cucumber"
     dependsOn(tasks.testClasses)
-    val reportPath = "${project.layout.buildDirectory}/reports/cucumber"
-    outputs.dir(reportPath)
     classpath(sourceSets.test.get().runtimeClasspath)
-    this.mainClass.set("io.cucumber.api.cli.Main")
-    this.args("--scan-classpath")
-    this.args("--include-engine", "cucumber")
-    this.args("--reports-dir", reportPath)
+
+    this.mainClass.set("io.cucumber.core.cli.Main")
+    this.args("--plugin", "pretty")
+    println("path = ${sourceSets.test.get().resources.srcDirs.first()}")
+    this.args("--glue", "io.github.soat7.myburgercontrol.testbdd", sourceSets.test.get().resources.srcDirs.first())
 }
 
 ktlint {
