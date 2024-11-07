@@ -34,7 +34,7 @@ class Configuration {
             return Properties()
         }
 
-        log.info { "Resource: $resource" }
+        log.debug { "Resource: $resource" }
 
         val map = om.readValue<Map<String, Any>>(resource)
         return convertToProperties(map)
@@ -79,7 +79,7 @@ class Configuration {
 
     operator fun get(key: String): String? = settings.getProperty(key)?.let { value ->
         val groupValues = IS_PROPERTY_RE.matchEntire(value)?.groupValues?.get(1)
-        log.info { "RE Match = " }
+        log.trace { "RE Match = " }
         groupValues?.let {
             get(it)
         } ?: value
