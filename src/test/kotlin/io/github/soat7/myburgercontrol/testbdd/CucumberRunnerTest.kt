@@ -16,7 +16,7 @@ import org.junit.platform.suite.api.Suite
 @SelectPackages("io.github.soat7.myburgercontrol.testbdd")
 @SelectClasspathResources(
     value = [
-        SelectClasspathResource("/"),
+        SelectClasspathResource("/features"),
     ],
 )
 @ConfigurationParameters(
