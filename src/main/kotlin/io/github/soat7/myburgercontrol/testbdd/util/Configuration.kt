@@ -43,6 +43,11 @@ class Configuration {
     private fun convertToProperties(map: Map<String, Any>) = run {
         val r = LinkedHashMap<String, String>()
         val prop = Properties(System.getProperties())
+
+        System.getenv().forEach {
+            prop.setProperty(it.key, it.value)
+        }
+
         flatterMap(map, r, "")
         r.forEach {
             prop.setProperty(it.key, it.value)
