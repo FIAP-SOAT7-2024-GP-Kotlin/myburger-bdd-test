@@ -1,15 +1,3 @@
 myburger:
-  baseUri: http://localhost:8080
-  propertyList:
-    - one
-    - two
-    - three
-  propertyMap:
-    keyOne: vOne
-    keyTwo: vTwo
-    keyThree: vThree
-    keyFour:
-      subKeyOne: vSubOne
-      subKeyTwo: vSubTwo
-      subKeyThree: ${myburger.propertyList[0]}
-      subKeyFour: ${JAVA_HOME}
+  baseUri: ${MYBURGER_BASE_URI}
+

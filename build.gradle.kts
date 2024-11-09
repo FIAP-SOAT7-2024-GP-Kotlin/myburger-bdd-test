@@ -1,12 +1,21 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.IOException
+import java.util.Properties
 
 val javaVersion = JavaVersion.VERSION_21
 val kotlinJVM = JvmTarget.JVM_21
 
 val cucumberVersion = "7.20.1"
-val fakerVersion = "1.6.0"
+val fakerVersion = "1.16.0"
 val restAassuredVersion = "5.5.0"
+
+val props = Properties()
+try {
+    props.load(file("$projectDir/.env").inputStream())
+} catch (e: IOException) {
+    println(e.message)
+}
 
 plugins {
     kotlin("jvm") version "2.0.21"
@@ -38,7 +47,12 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1+")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+
+    implementation("io.rest-assured:rest-assured:$restAassuredVersion")
+    implementation("io.rest-assured:json-path:$restAassuredVersion")
+    implementation("io.rest-assured:kotlin-extensions:$restAassuredVersion")
 
     implementation("io.jsonwebtoken:jjwt-api:0.12+")
     implementation("io.jsonwebtoken:jjwt-impl:0.12+")
@@ -50,14 +64,14 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-console")
     testImplementation("org.junit.platform:junit-platform-suite")
     testImplementation("io.github.serpro69:kotlin-faker:$fakerVersion")
-    testImplementation("io.rest-assured:rest-assured:$restAassuredVersion")
-    testImplementation("io.rest-assured:json-path:$restAassuredVersion")
-    testImplementation("io.rest-assured:kotlin-extensions:$restAassuredVersion")
 }
 
 tasks.test {
     useJUnitPlatform()
     systemProperty("cucumber.junit-platform.naming-strategy", "long")
+    environment.putAll(
+        props.entries.associate { it.key.toString() to it.value.toString() },
+    )
 }
 
 tasks.withType<KotlinCompile> {

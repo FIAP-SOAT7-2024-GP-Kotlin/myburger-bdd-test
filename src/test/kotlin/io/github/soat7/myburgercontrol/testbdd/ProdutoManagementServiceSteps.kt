@@ -5,21 +5,41 @@ import io.cucumber.java.pt.Dado
 import io.cucumber.java.pt.Entao
 import io.cucumber.java.pt.Quando
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.serpro69.kfaker.faker
+import io.github.soat7.myburgercontrol.testbdd.dto.UserRole
+import io.github.soat7.myburgercontrol.testbdd.service.AuthService
 import io.github.soat7.myburgercontrol.testbdd.util.Configuration
+import io.restassured.builder.RequestSpecBuilder
 
 private val log = KotlinLogging.logger { }
 
 class ProdutoManagementServiceSteps {
+    private val config = Configuration
+    private val spec = RequestSpecBuilder()
+        .setBaseUri(config["myburger.baseUri"])
+        .build()
+
+    private val faker = faker { this.fakerConfig { locale = "pt-BR" } }
+    private val cpf = "11111111111"
+    private val password = "123"
+    private val userRole = UserRole.ADMIN
+
+
     @Before
     fun setUp() {
-        val c = Configuration()
-        log.info { "############################## subKeyThree=${c["myburger.propertyMap.keyFour.subKeyThree"]}" }
-        log.info { "############################## java.home=${c["myburger.propertyMap.keyFour.subKeyFour"]}" }
     }
 
     @Dado("que o usuário cadastrado tenha um papel de ADMINISTRADOR")
     fun `que o usuario cadastrado tenha um papel de ADMINISTRADOR`() {
-        // TODO: Implementação do cenário onde o usuário possui o papel de ADMINISTRADOR
+        log.info { "Dado que o usuario cadastrado tenha um papel de ADMINISTRADOR" }
+        log.info { "criando o usuário" }
+        val response = try {
+            AuthService.login(cpf, password)
+        } catch (e: Exception) {
+            log.error(e) { e.message }
+            error("Erro ao tentar fazer login")
+        }
+        log.info { "response=$response" }
     }
 
     @Quando("o usuário cadastrar um novo produto com nome, descrição, preço e tipo")
