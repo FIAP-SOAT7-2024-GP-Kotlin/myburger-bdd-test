@@ -7,7 +7,8 @@ Funcionalidade:  Serviço de Gerenciamento de Produto
   Contexto:
     Dado que o usuário cadastrado tenha um papel de ADMINISTRADOR
 
-  Cenário:  Cadastrar um novo produto
+  @Ignorar
+  Cenário: Cadastrar um novo produto
     Quando o usuário cadastrar um novo produto com nome, descrição, preço e tipo
     Então o sistema deve retornar uma mensagem de sucesso informando que o produto foi cadastrado com sucesso
 

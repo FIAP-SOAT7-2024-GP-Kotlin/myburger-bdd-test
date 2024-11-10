@@ -64,6 +64,8 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-console")
     testImplementation("org.junit.platform:junit-platform-suite")
     testImplementation("io.github.serpro69:kotlin-faker:$fakerVersion")
+    testImplementation("org.assertj:assertj-core:3+")
+
 }
 
 tasks.test {

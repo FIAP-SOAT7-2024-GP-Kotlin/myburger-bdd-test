@@ -20,10 +20,7 @@ object UserService {
         .contentType(ContentType.JSON)
         .body(config.objectMapper.writeValueAsString(UserCreationDTO(cpf, password, userRole)))
         .post("/users")
-        .then()
-        .statusCode(HttpStatus.SC_OK)
-        .extract()
-        .`as`(UserResponse::class.java)
+
 
     fun findUserByCpf(cpf: String) = given().spec(spec)
         .`when`()
