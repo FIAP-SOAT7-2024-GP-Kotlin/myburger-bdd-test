@@ -24,7 +24,6 @@ class ProdutoManagementServiceSteps {
     private val password = "123"
     private val userRole = UserRole.ADMIN
 
-
     @Before
     fun setUp() {
     }

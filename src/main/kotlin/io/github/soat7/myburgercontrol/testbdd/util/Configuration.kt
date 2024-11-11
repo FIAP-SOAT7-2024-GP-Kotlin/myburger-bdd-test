@@ -20,7 +20,7 @@ object Configuration {
         KotlinModule.Builder()
             .singletonSupport(SingletonSupport.CANONICALIZE)
             .build(),
-        JavaTimeModule()
+        JavaTimeModule(),
     )
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .serializationInclusion(JsonInclude.Include.NON_NULL)

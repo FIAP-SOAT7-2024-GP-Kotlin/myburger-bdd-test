@@ -1,14 +1,19 @@
 package io.github.soat7.myburgercontrol.testbdd
 
+import io.cucumber.java.After
 import io.cucumber.java.Before
 import io.cucumber.java.pt.Dado
 import io.cucumber.java.pt.Entao
 import io.cucumber.java.pt.Quando
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.soat7.myburgercontrol.testbdd.dto.UserRole
 import io.github.soat7.myburgercontrol.testbdd.service.UserService
+import io.github.soat7.myburgercontrol.testbdd.util.DataSource
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
 import org.assertj.core.api.Assertions.assertThat
+
+private val log = KotlinLogging.logger { }
 
 class AutorizacaoUserServiceSteps {
 
@@ -23,6 +28,24 @@ class AutorizacaoUserServiceSteps {
         private val createdUserIds = mutableListOf<String>()
     }
 
+    @After("@CleanUp")
+    fun tearDown() {
+        log.info {
+            """
+                ################
+                Cleaning Up User database
+                ################
+            """.trimIndent()
+        }
+        DataSource.connection().use { conn ->
+            conn.prepareStatement("DELETE FROM myburguer.user WHERE id = ANY (?)")
+                .use { stmt ->
+                    stmt.setArray(1, conn.createArrayOf("uuid", createdUserIds.toTypedArray()))
+                    stmt.execute()
+                }
+        }
+    }
+
     @Before
     fun setUp() {
     }
@@ -32,7 +55,7 @@ class AutorizacaoUserServiceSteps {
         response = userService.createUser(
             cpf = cpf,
             password = password,
-            userRole = UserRole.USER
+            userRole = UserRole.USER,
         )
     }
 
@@ -48,6 +71,7 @@ class AutorizacaoUserServiceSteps {
 
         assertThat(userResponse.cpf).isEqualTo(cpf)
         assertThat(userResponse.role).isEqualTo(UserRole.USER)
+        createdUserIds.add(userResponse.id.toString())
     }
 
     @Dado("que o usuário existe no banco de dados")

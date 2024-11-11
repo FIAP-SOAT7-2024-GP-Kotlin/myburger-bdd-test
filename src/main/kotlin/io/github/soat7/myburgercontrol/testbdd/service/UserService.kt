@@ -21,7 +21,6 @@ object UserService {
         .body(config.objectMapper.writeValueAsString(UserCreationDTO(cpf, password, userRole)))
         .post("/users")
 
-
     fun findUserByCpf(cpf: String) = given().spec(spec)
         .`when`()
         .contentType(ContentType.JSON)

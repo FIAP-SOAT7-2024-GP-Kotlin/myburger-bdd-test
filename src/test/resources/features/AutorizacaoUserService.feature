@@ -8,6 +8,7 @@ Funcionalidade: Serviço de Autorização e Criação de Usuário
     Quando o usuário se cadastrar com um email válido e uma senha forte
     Então o sistema cria um novo usuário com as informações fornecidas
 
+  @CleanUp
   Cenário: Buscar usuário por ID
     Dado que o usuário existe no banco de dados
     Quando o usuário realiza a busca pelo seu ID

@@ -18,14 +18,13 @@ object AuthService {
             config.objectMapper.writeValueAsString(
                 mapOf(
                     "cpf" to cpf,
-                    "password" to password
-                )
-            )
+                    "password" to password,
+                ),
+            ),
         )
         .post("/auth")
         .then()
         .statusCode(200)
         .extract()
         .path<String>("accessToken")
-
 }

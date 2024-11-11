@@ -45,6 +45,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.oshai:kotlin-logging:7+")
     implementation("ch.qos.logback:logback-classic:1+")
+    implementation("com.zaxxer:HikariCP:6.1.0")
+    implementation("org.postgresql:postgresql:42.7.+")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
@@ -65,7 +67,6 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-suite")
     testImplementation("io.github.serpro69:kotlin-faker:$fakerVersion")
     testImplementation("org.assertj:assertj-core:3+")
-
 }
 
 tasks.test {
