@@ -1,5 +1,5 @@
 # language: pt
-
+@Cleanup
 Funcionalidade: Serviço de Autorização e Criação de Usuário
 
   # Cenários de criação de usuários e buscas
@@ -8,13 +8,12 @@ Funcionalidade: Serviço de Autorização e Criação de Usuário
     Quando o usuário se cadastrar com um email válido e uma senha forte
     Então o sistema cria um novo usuário com as informações fornecidas
 
-  @CleanUp
+
   Cenário: Buscar usuário por ID
     Dado que o usuário existe no banco de dados
     Quando o usuário realiza a busca pelo seu ID
     Então o sistema retorna as informações do usuário correspondente ao ID informado
 
-  @Ignorar
   Cenário: Buscar usuário inexistente por ID
     Dado que o usuário não existe no banco de dados
     Quando o usuário realiza a busca por um ID inexistente
@@ -44,4 +43,4 @@ Funcionalidade: Serviço de Autorização e Criação de Usuário
   Cenário: Usuário não autentica no sistema
     Dado que o usuário não existe no banco de dados
     Quando o usuário realiza login com seu email e senha inválidos
-    Então o sistema rejeita a solicitação de login e retorna uma mensagem de erro indicando que as credenciais são inválidas.
+    Então o sistema rejeita a solicitação de login e retorna uma mensagem de erro indicando que as credenciais são inválidas

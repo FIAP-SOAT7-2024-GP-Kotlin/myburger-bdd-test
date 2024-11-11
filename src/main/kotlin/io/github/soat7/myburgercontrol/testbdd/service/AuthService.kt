@@ -12,7 +12,7 @@ object AuthService {
         .setContentType(ContentType.JSON)
         .build()
 
-    fun login(cpf: String, password: String) = given()
+    fun login(cpf: String, password: String): String = given()
         .spec(spec)
         .body(
             config.objectMapper.writeValueAsString(
@@ -25,6 +25,7 @@ object AuthService {
         .post("/auth")
         .then()
         .statusCode(200)
+        .log().all() // Log the response for debugging purposes
         .extract()
-        .path<String>("accessToken")
+        .path("access_token")
 }

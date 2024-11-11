@@ -1,17 +1,18 @@
 package io.github.soat7.myburgercontrol.testbdd
 
 import io.cucumber.java.After
-import io.cucumber.java.Before
 import io.cucumber.java.pt.Dado
 import io.cucumber.java.pt.Entao
 import io.cucumber.java.pt.Quando
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.soat7.myburgercontrol.testbdd.dto.UserRole
+import io.github.soat7.myburgercontrol.testbdd.service.AuthService
 import io.github.soat7.myburgercontrol.testbdd.service.UserService
-import io.github.soat7.myburgercontrol.testbdd.util.DataSource
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.CoreMatchers.equalTo
+import java.util.UUID
 
 private val log = KotlinLogging.logger { }
 
@@ -21,33 +22,30 @@ class AutorizacaoUserServiceSteps {
 
     private val cpf = "11111111111"
     private val password = "123"
+    private val unExistingUserUUID = UUID.randomUUID()
 
     private lateinit var response: Response
+    private lateinit var createdUser: UserService.UserResponse
+    private lateinit var accessToken: String
 
     companion object {
         private val createdUserIds = mutableListOf<String>()
+
     }
 
-    @After("@CleanUp")
-    fun tearDown() {
+    @After("@Cleanup")
+    fun cleanUpDatabase() {
         log.info {
             """
-                ################
-                Cleaning Up User database
-                ################
+                ######################################
+                Cleaning up Database
+                ######################################
             """.trimIndent()
         }
-        DataSource.connection().use { conn ->
-            conn.prepareStatement("DELETE FROM myburguer.user WHERE id = ANY (?)")
-                .use { stmt ->
-                    stmt.setArray(1, conn.createArrayOf("uuid", createdUserIds.toTypedArray()))
-                    stmt.execute()
-                }
+        if (createdUserIds.isNotEmpty()) {
+            UserService.deleteUsers(createdUserIds)
+            createdUserIds.clear()
         }
-    }
-
-    @Before
-    fun setUp() {
     }
 
     @Quando("o usuário se cadastrar com um email válido e uma senha forte")
@@ -61,47 +59,76 @@ class AutorizacaoUserServiceSteps {
 
     @Entao("o sistema cria um novo usuário com as informações fornecidas")
     fun `o sistema cria um novo usuario com as informacoes fornecidas`() {
-        val userResponse = response.then()
+        val createUserResponse = response.then()
             .statusCode(HttpStatus.SC_OK)
             .extract()
             .`as`(UserService.UserResponse::class.java)
 
-        assertThat(userResponse)
+        assertThat(createUserResponse)
             .isNotNull
 
-        assertThat(userResponse.cpf).isEqualTo(cpf)
-        assertThat(userResponse.role).isEqualTo(UserRole.USER)
-        createdUserIds.add(userResponse.id.toString())
+        assertThat(createUserResponse.cpf).isEqualTo(cpf)
+        assertThat(createUserResponse.role).isEqualTo(UserRole.USER)
+        createdUser = createUserResponse
+        createdUserIds.add(createUserResponse.id.toString())
     }
 
     @Dado("que o usuário existe no banco de dados")
     fun `que o usuario existe no banco de dados`() {
-        // TODO: Implementação do cenário onde já existe um usuário cadastrado no sistema
+        if (!UserService.isUserCreated(cpf)) {
+            createdUser = userService.createUser(
+                cpf = cpf,
+                password = password,
+                userRole = UserRole.USER,
+            )
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .`as`(UserService.UserResponse::class.java)
+            createdUserIds.add(createdUser.id.toString())
+        }
+
+        accessToken = AuthService.login(cpf, password)
+        UserService.updateAccessToken(accessToken)
+
+        createdUser = userService.findUserByCpf(cpf)
+            .then()
+            .statusCode(HttpStatus.SC_OK)
+            .extract()
+            .`as`(UserService.UserResponse::class.java)
     }
 
     @Quando("o usuário realiza a busca pelo seu ID")
     fun `o usuario realiza a busca pelo seu ID`() {
-        // TODO: Implementação do cenário onde o usuário consulta as informações de seu próprio cadastro por ID
+        response = userService.findUserByID(createdUser.id)
     }
 
     @Entao("o sistema retorna as informações do usuário correspondente ao ID informado")
     fun `o sistema retorna as informacoes do usuario correspondente ao ID informado`() {
-        // TODO: Implementação do cenário onde o sistema retorna as informações do usuário consultado por ID
+        response.then()
+            .statusCode(HttpStatus.SC_OK)
+            .log().all()
+            .body("id", equalTo(createdUser.id.toString()))
+            .body("cpf", equalTo(cpf))
+            .body("role", equalTo(UserRole.USER.toString()))
     }
 
     @Dado("que o usuário não existe no banco de dados")
     fun `que o usuario nao existe no banco de dados`() {
-        // TODO: Implementação do cenário onde já existe um usuário cadastrado no sistema
+        userService.findUserByID(unExistingUserUUID)
+            .then()
+            .statusCode(HttpStatus.SC_NOT_FOUND)
     }
 
     @Quando("o usuário realiza a busca por um ID inexistente")
     fun `o usuario realiza a busca por um ID inexistente`() {
-        // TODO: Implementação do cenário onde o usuário consulta um cadastro com ID inexistente no sistema
+        response = userService.findUserByID(unExistingUserUUID)
     }
 
     @Entao("o sistema retorna uma mensagem de erro indicando que o usuário não foi encontrado")
     fun `o sistema retorna uma mensagem de erro indicando que o usuario nao foi encontrado`() {
-        // TODO: Implementação do cenário onde o sistema retorna uma mensagem de erro ao consultar um ID inexistente
+        response.then()
+            .statusCode(HttpStatus.SC_NOT_FOUND)
     }
 
     @Quando("o usuário realiza a busca pelo seu CPF")
