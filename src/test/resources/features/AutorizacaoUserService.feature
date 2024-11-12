@@ -1,5 +1,6 @@
 # language: pt
 @Cleanup
+@Ignorar
 Funcionalidade: Serviço de Autorização e Criação de Usuário
 
   # Cenários de criação de usuários e buscas

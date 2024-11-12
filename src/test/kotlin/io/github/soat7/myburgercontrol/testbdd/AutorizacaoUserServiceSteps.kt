@@ -36,21 +36,6 @@ class AutorizacaoUserServiceSteps {
         private val createdUserIds = mutableListOf<String>()
     }
 
-    @After("@Cleanup")
-    fun cleanUpDatabase() {
-        log.info {
-            """
-                ######################################
-                Cleaning up Database
-                ######################################
-            """.trimIndent()
-        }
-        if (createdUserIds.isNotEmpty()) {
-            UserService.deleteUsers(createdUserIds)
-            createdUserIds.clear()
-        }
-    }
-
     @Quando("o usuário se cadastrar com um email válido e uma senha forte")
     fun `o usuario se cadastrar com um email valido e uma senha forte`() {
         response = userService.createUser(
@@ -191,5 +176,20 @@ class AutorizacaoUserServiceSteps {
     fun `o sistema rejeita a solicitacao de login e retorna uma mensagem de erro indicando que as credenciais sao invalidas`() {
         response.then()
             .statusCode(HttpStatus.SC_UNAUTHORIZED)
+    }
+
+    @After("@Cleanup")
+    fun cleanUpDatabase() {
+        log.info {
+            """
+                ######################################
+                Cleaning up Database Auth User Feature
+                ######################################
+            """.trimIndent()
+        }
+        if (createdUserIds.isNotEmpty()) {
+            UserService.deleteUsers(createdUserIds)
+            createdUserIds.clear()
+        }
     }
 }

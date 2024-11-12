@@ -67,7 +67,7 @@ object UserService {
         .get("/users/{id}")
 
     fun deleteUsers(userIds: Collection<String>) {
-        log.info { "DeleteUsers size: ${userIds.size}" }
+        log.info { "Delete Users size: ${userIds.size}" }
         DataSource.connection().use { conn ->
             conn.prepareStatement("DELETE FROM myburguer.user WHERE id = ANY (?)")
                 .use { stmt ->
