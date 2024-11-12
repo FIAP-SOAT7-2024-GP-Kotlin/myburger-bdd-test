@@ -19,10 +19,15 @@ object UserService {
         .setBaseUri(config["myburger.baseUri"])
         .build()
 
-    fun updateAccessToken(accessToken: String) {
+    fun updateAccessToken(accessToken: String?) {
         spec = RequestSpecBuilder()
-            .setBaseUri(config["myburger.baseUri"])
-            .addHeader("Authorization", "Bearer $accessToken")
+            .setBaseUri(config["myburger.baseUri"]).let {
+                if (accessToken != null) {
+                    it.addHeader("Authorization", "Bearer $accessToken")
+                } else {
+                    it
+                }
+            }
             .build()
     }
 

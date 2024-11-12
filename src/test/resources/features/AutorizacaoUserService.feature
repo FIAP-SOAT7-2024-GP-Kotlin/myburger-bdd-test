@@ -19,13 +19,12 @@ Funcionalidade: Serviço de Autorização e Criação de Usuário
     Quando o usuário realiza a busca por um ID inexistente
     Então o sistema retorna uma mensagem de erro indicando que o usuário não foi encontrado
 
-  @Ignorar
+
   Cenário: Buscar usuário por CPF
     Dado que o usuário existe no banco de dados
     Quando o usuário realiza a busca pelo seu CPF
     Então o sistema retorna as informações do usuário correspondente ao CPF informado
 
-  @Ignorar
   Cenário: Buscar usuário por CPF inexistente
     Dado que o usuário não existe no banco de dados
     Quando o usuário realiza a busca por um CPF inexistente

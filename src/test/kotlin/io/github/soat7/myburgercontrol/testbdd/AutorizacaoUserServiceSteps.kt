@@ -5,6 +5,7 @@ import io.cucumber.java.pt.Dado
 import io.cucumber.java.pt.Entao
 import io.cucumber.java.pt.Quando
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.serpro69.kfaker.faker
 import io.github.soat7.myburgercontrol.testbdd.dto.UserRole
 import io.github.soat7.myburgercontrol.testbdd.service.AuthService
 import io.github.soat7.myburgercontrol.testbdd.service.UserService
@@ -28,9 +29,10 @@ class AutorizacaoUserServiceSteps {
     private lateinit var createdUser: UserService.UserResponse
     private lateinit var accessToken: String
 
+    private val faker = faker { this.fakerConfig { locale = "pt-BR" } }
+
     companion object {
         private val createdUserIds = mutableListOf<String>()
-
     }
 
     @After("@Cleanup")
@@ -76,6 +78,7 @@ class AutorizacaoUserServiceSteps {
     @Dado("que o usuário existe no banco de dados")
     fun `que o usuario existe no banco de dados`() {
         if (!UserService.isUserCreated(cpf)) {
+            UserService.updateAccessToken(null)
             createdUser = userService.createUser(
                 cpf = cpf,
                 password = password,
@@ -115,9 +118,22 @@ class AutorizacaoUserServiceSteps {
 
     @Dado("que o usuário não existe no banco de dados")
     fun `que o usuario nao existe no banco de dados`() {
-        userService.findUserByID(unExistingUserUUID)
-            .then()
-            .statusCode(HttpStatus.SC_NOT_FOUND)
+        if (!UserService.isUserCreated(cpf)) {
+            UserService.updateAccessToken(null)
+            createdUser = userService.createUser(
+                cpf = cpf,
+                password = password,
+                userRole = UserRole.USER,
+            )
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .`as`(UserService.UserResponse::class.java)
+            createdUserIds.add(createdUser.id.toString())
+        }
+
+        accessToken = AuthService.login(cpf, password)
+        UserService.updateAccessToken(accessToken)
     }
 
     @Quando("o usuário realiza a busca por um ID inexistente")
@@ -133,22 +149,29 @@ class AutorizacaoUserServiceSteps {
 
     @Quando("o usuário realiza a busca pelo seu CPF")
     fun `o usuario realiza a busca pelo seu CPF`() {
-        // TODO: Implementação do cenário onde o usuário consulta as informações de seu próprio cadastro por CPF
+        response = userService.findUserByCpf(cpf)
     }
 
     @Entao("o sistema retorna as informações do usuário correspondente ao CPF informado")
     fun `o sistema retorna as informacoes do usuario correspondente ao CPF informado`() {
-        // TODO: Implementação do cenário onde o sistema retorna as informações do usuário consultado por CPF
+        response.then()
+            .statusCode(HttpStatus.SC_OK)
+            .log().all()
+            .body("id", equalTo(createdUser.id.toString()))
+            .body("cpf", equalTo(cpf))
+            .body("role", equalTo(UserRole.USER.toString()))
     }
 
     @Quando("o usuário realiza a busca por um CPF inexistente")
     fun `o usuario realiza a busca por um CPF inexistente`() {
-        // TODO: Implementação do cenário onde o usuário consulta um cadastro com CPF inexistente no sistema
+        val randomCpf = faker.string.numerify("#########")
+        response = userService.findUserByCpf(randomCpf)
     }
 
     @Quando("o usuário realiza login com seu email e senha válidos")
     fun `o usuario realiza login com seu email e senha validos`() {
-        // TODO: Implementação do cenário onde o usuário realiza login com suas credenciais válidas
+        response.then()
+            .statusCode(HttpStatus.SC_NOT_FOUND)
     }
 
     @Entao("o sistema autentica o usuário e retorna um token de acesso")
