@@ -155,7 +155,7 @@ class ProdutoManagementServiceSteps {
         throw NotImplementedError()
     }
 
-    @After("@Cleanup")
+    @After("@CleanupProductFeature")
     fun cleanUpDatabase() {
         log.info {
             """

@@ -178,7 +178,7 @@ class AutorizacaoUserServiceSteps {
             .statusCode(HttpStatus.SC_UNAUTHORIZED)
     }
 
-    @After("@Cleanup")
+    @After("@CleanupAuthUserFeature")
     fun cleanUpDatabase() {
         log.info {
             """

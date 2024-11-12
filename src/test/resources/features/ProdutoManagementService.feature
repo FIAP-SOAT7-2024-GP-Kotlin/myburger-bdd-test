@@ -1,5 +1,5 @@
 # language: pt
-@Cleanup
+@CleanupProductFeature
 Funcionalidade:  Serviço de Gerenciamento de Produto
 
   Essa funcionalidade permite que os usuários cadastram produtos, atualizem e consultem informações sobre eles.
