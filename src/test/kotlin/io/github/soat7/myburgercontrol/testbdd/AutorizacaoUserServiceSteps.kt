@@ -13,6 +13,7 @@ import io.restassured.response.Response
 import org.apache.http.HttpStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.notNullValue
 import java.util.UUID
 
 private val log = KotlinLogging.logger { }
@@ -91,7 +92,7 @@ class AutorizacaoUserServiceSteps {
             createdUserIds.add(createdUser.id.toString())
         }
 
-        accessToken = AuthService.login(cpf, password)
+        accessToken = AuthService.loginAccessToken(cpf, password)
         UserService.updateAccessToken(accessToken)
 
         createdUser = userService.findUserByCpf(cpf)
@@ -132,7 +133,7 @@ class AutorizacaoUserServiceSteps {
             createdUserIds.add(createdUser.id.toString())
         }
 
-        accessToken = AuthService.login(cpf, password)
+        accessToken = AuthService.loginAccessToken(cpf, password)
         UserService.updateAccessToken(accessToken)
     }
 
@@ -170,22 +171,25 @@ class AutorizacaoUserServiceSteps {
 
     @Quando("o usuário realiza login com seu email e senha válidos")
     fun `o usuario realiza login com seu email e senha validos`() {
-        response.then()
-            .statusCode(HttpStatus.SC_NOT_FOUND)
+        response = AuthService.loginCall(cpf, password)
     }
 
     @Entao("o sistema autentica o usuário e retorna um token de acesso")
     fun `o sistema autentica o usuario e retorna um token de acesso`() {
-        // TODO: Implementação do cenário onde o sistema autentica o usuário e retorna um token de acesso
+        response.then()
+            .statusCode(HttpStatus.SC_OK)
+            .log().all()
+            .body("access_token", notNullValue())
     }
 
     @Quando("o usuário realiza login com seu email e senha inválidos")
     fun `o usuario realiza login com seu email e senha invalidos`() {
-        // TODO: Implementação do cenário onde o usuário realiza login com suas credenciais inválidas
+        response = AuthService.loginCall(cpf, "222")
     }
 
     @Entao("o sistema rejeita a solicitação de login e retorna uma mensagem de erro indicando que as credenciais são inválidas")
     fun `o sistema rejeita a solicitacao de login e retorna uma mensagem de erro indicando que as credenciais sao invalidas`() {
-        // TODO: Implementação do cenário onde o sistema rejeita a solicitação de login e retorna uma mensagem de erro
+        response.then()
+            .statusCode(HttpStatus.SC_UNAUTHORIZED)
     }
 }

@@ -32,13 +32,11 @@ Funcionalidade: Serviço de Autorização e Criação de Usuário
 
   # Cenários de autenticação
 
-  @Ignorar
   Cenário: Usuário autentica no sistema
     Dado que o usuário existe no banco de dados
     Quando o usuário realiza login com seu email e senha válidos
     Então o sistema autentica o usuário e retorna um token de acesso
 
-  @Ignorar
   Cenário: Usuário não autentica no sistema
     Dado que o usuário não existe no banco de dados
     Quando o usuário realiza login com seu email e senha inválidos

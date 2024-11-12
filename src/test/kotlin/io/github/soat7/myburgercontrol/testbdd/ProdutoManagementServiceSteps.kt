@@ -33,7 +33,7 @@ class ProdutoManagementServiceSteps {
         log.info { "Dado que o usuario cadastrado tenha um papel de ADMINISTRADOR" }
         log.info { "criando o usuário" }
         val response = try {
-            AuthService.login(cpf, password)
+            AuthService.loginAccessToken(cpf, password)
         } catch (e: Exception) {
             log.error(e) { e.message }
             error("Erro ao tentar fazer login")
