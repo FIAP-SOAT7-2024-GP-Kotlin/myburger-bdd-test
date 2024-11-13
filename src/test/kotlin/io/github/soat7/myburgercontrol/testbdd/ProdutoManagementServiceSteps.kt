@@ -16,7 +16,11 @@ import io.github.soat7.myburgercontrol.testbdd.service.UserService
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.notNullValue
+import org.hamcrest.Matchers.greaterThanOrEqualTo
 import java.math.RoundingMode
+import java.util.UUID
 
 private val log = KotlinLogging.logger { }
 
@@ -87,57 +91,79 @@ class ProdutoManagementServiceSteps {
 
     @Dado("que existe um produto cadastrado no sistema")
     fun `que existe um produto cadastrado no sistema`() {
-        throw NotImplementedError()
-    }
+        inputProduct = ProductDTO(
+            name = faker.food.dish(),
+            description = (1..10).joinToString(" ") { faker.lorem.words() },
+            type = ProductType.entries.toTypedArray().random(),
+            price = faker.random.nextDouble().let { it * 100 }.toBigDecimal().setScale(2, RoundingMode.HALF_UP),
+        )
+        val productDTO = ProductService.createProduct(inputProduct)
+            .then()
+            .log().all()
+            .statusCode(HttpStatus.SC_OK)
+            .extract()
+            .`as`(ProductDTO::class.java)
 
-    @Quando("o usuário atualizar as informações do produto com novo nome, descrição, preço e tipo")
-    fun `o usuario atualizar as informaçoes do produto com novo nome, descricao, preco e tipo`() {
-        throw NotImplementedError()
-    }
-
-    @Entao("o sistema deve retornar uma mensagem de sucesso informando que as informações do produto foram atualizadas com sucesso")
-    fun `o sistema deve retornar uma mensagem de sucesso informando que as informacoes do produto foram atualizadas com sucesso`() {
-        throw NotImplementedError()
+        createdProductIds.add(productDTO.id.toString())
     }
 
     @Quando("o usuário consultar as informações do produto")
     fun `o usuario consultar as informacoes do produto`() {
-        throw NotImplementedError()
+        response = ProductService.getProductById(createdProductIds.first())
     }
 
     @Entao("o sistema deve retornar as informações do produto")
     fun `o sistema deve retornar as informacoes do produto`() {
-        throw NotImplementedError()
+        response
+            .then()
+            .log().all()
+            .statusCode(HttpStatus.SC_OK)
+            .body("id", notNullValue())
+            .body("name", equalTo(inputProduct.name))
+            .body("description", equalTo(inputProduct.description))
+            .body("price", equalTo(inputProduct.price.toFloat()))
+            .body("type", equalTo(inputProduct.type.name))
     }
 
     @Quando("o usuário consultar as informações de um produto inexistente")
     fun `o usuario consultar as informacoes de um produto inexistente`() {
-        throw NotImplementedError()
+        response = ProductService.getProductById(UUID.randomUUID().toString())
     }
 
     @Entao("o sistema deve retornar uma mensagem de erro informando que o produto não foi encontrado")
     fun `o sistema deve retornar uma mensagem de erro informando que o produto nao foi encontrado`() {
-        throw NotImplementedError()
+        response
+            .then()
+            .statusCode(HttpStatus.SC_NOT_FOUND)
     }
 
     @Quando("o usuário consultar todos os produtos cadastrados")
     fun `o usuario consultar todos os produtos cadastrados`() {
-        throw NotImplementedError()
+        response = ProductService.getProducts()
     }
 
     @Entao("o sistema deve retornar uma lista com todos os produtos cadastrados")
     fun `o sistema deve retornar uma lista com todos os produtos cadastrados`() {
-        throw NotImplementedError()
+        response
+            .then()
+            .log().all()
+            .statusCode(HttpStatus.SC_OK)
+            .body("content.size()", greaterThanOrEqualTo(1))
+
     }
 
     @Quando("o usuário consultar todos os produtos cadastrados de um tipo específico")
     fun `o usuario consultar todos os produtos cadastrados de um tipo especifico`() {
-        throw NotImplementedError()
+        response = ProductService.getProductByType(inputProduct.type)
     }
 
     @Entao("o sistema deve retornar uma lista com todos os produtos cadastrados do tipo específico")
-    fun `o sistema deve retornar uma lista com todos os produtos cadastrados do tipo específico`() {
-        throw NotImplementedError()
+    fun `o sistema deve retornar uma lista com todos os produtos cadastrados do tipo especifico`() {
+        response
+            .then()
+            .log().all()
+            .statusCode(HttpStatus.SC_OK)
+            .body("size()", greaterThanOrEqualTo(1))
     }
 
     @Quando("o usuário excluir o produto")
@@ -146,7 +172,7 @@ class ProdutoManagementServiceSteps {
     }
 
     @Entao("o sistema deve retornar uma mensagem de sucesso informando que o produto foi excluído com sucesso")
-    fun `o sistema deve retornar uma mensagem de sucesso informando que o produto foi excluído com sucesso`() {
+    fun `o sistema deve retornar uma mensagem de sucesso informando que o produto foi excluido com sucesso`() {
         throw NotImplementedError()
     }
 

@@ -2,6 +2,7 @@ package io.github.soat7.myburgercontrol.testbdd.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.soat7.myburgercontrol.testbdd.dto.ProductDTO
+import io.github.soat7.myburgercontrol.testbdd.dto.ProductType
 import io.github.soat7.myburgercontrol.testbdd.util.Configuration
 import io.github.soat7.myburgercontrol.testbdd.util.DataSource
 import io.restassured.RestAssured.given
@@ -34,6 +35,26 @@ object ProductService {
         .`when`()
         .body(config.objectMapper.writeValueAsString(productDTO))
         .post("/products")
+
+    fun getProductById(productId: String) = given(spec)
+        .contentType(ContentType.JSON)
+        .`when`()
+        .get("/products/$productId")
+
+
+    fun getProducts() = given(spec)
+        .contentType(ContentType.JSON)
+        .`when`()
+        .queryParam("page", 0)
+        .queryParam("size", 20)
+        .get("/products")
+
+    fun getProductByType(type: ProductType) = given(spec)
+        .contentType(ContentType.JSON)
+        .`when`()
+        .queryParam("type", type.name)
+        .get("/products/type")
+
 
     fun deleteProducts(productIds: Collection<String>) {
         log.info { "Delete Products size: ${productIds.size}" }
