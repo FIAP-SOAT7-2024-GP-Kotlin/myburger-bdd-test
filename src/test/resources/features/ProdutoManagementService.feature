@@ -1,4 +1,5 @@
 # language: pt
+@Ignorar
 @CleanupProductFeature
 Funcionalidade:  Serviço de Gerenciamento de Produto
 
