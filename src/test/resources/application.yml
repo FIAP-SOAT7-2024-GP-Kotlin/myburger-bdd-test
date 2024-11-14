@@ -1,0 +1,8 @@
+myburger:
+  baseUri: ${MYBURGER_BASE_URI}
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    maxPoolSize: 10
