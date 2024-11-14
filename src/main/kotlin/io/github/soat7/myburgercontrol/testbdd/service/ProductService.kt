@@ -55,6 +55,10 @@ object ProductService {
         .queryParam("type", type.name)
         .get("/products/type")
 
+    fun deleteProduct(productId: String) = given(spec)
+        .contentType(ContentType.JSON)
+        .`when`()
+        .delete("/products/$productId")
 
     fun deleteProducts(productIds: Collection<String>) {
         log.info { "Delete Products size: ${productIds.size}" }

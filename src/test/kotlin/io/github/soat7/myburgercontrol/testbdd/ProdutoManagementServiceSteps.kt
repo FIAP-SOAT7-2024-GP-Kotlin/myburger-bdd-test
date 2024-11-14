@@ -168,17 +168,20 @@ class ProdutoManagementServiceSteps {
 
     @Quando("o usuário excluir o produto")
     fun `o usuario excluir o produto`() {
-        throw NotImplementedError()
+        response = ProductService.deleteProduct(createdProductIds.first())
     }
 
     @Entao("o sistema deve retornar uma mensagem de sucesso informando que o produto foi excluído com sucesso")
     fun `o sistema deve retornar uma mensagem de sucesso informando que o produto foi excluido com sucesso`() {
-        throw NotImplementedError()
+        response
+            .then()
+            .log().all()
+            .statusCode(HttpStatus.SC_NO_CONTENT)
     }
 
     @Quando("o usuário excluir um produto inexistente")
     fun `o usuario excluir um produto inexistente`() {
-        throw NotImplementedError()
+        response = ProductService.getProductById(UUID.randomUUID().toString())
     }
 
     @After("@CleanupProductFeature")
