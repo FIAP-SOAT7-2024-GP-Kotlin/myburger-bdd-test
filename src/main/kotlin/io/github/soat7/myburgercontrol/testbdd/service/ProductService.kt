@@ -41,7 +41,6 @@ object ProductService {
         .`when`()
         .get("/products/$productId")
 
-
     fun getProducts() = given(spec)
         .contentType(ContentType.JSON)
         .`when`()

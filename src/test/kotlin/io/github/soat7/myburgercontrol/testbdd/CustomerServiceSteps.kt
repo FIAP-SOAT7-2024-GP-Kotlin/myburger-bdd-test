@@ -59,7 +59,7 @@ class CustomerServiceSteps {
         inputCustomerDTO = CustomerDTO(
             cpf = cpf,
             name = faker.name.name(),
-            email = faker.internet.email()
+            email = faker.internet.email(),
         )
         response = CustomerService.createCustomer(inputCustomerDTO)
     }
@@ -85,7 +85,7 @@ class CustomerServiceSteps {
         inputCustomerDTO = CustomerDTO(
             cpf = cpf,
             name = faker.name.name(),
-            email = faker.internet.email()
+            email = faker.internet.email(),
         )
         val createdCustomer = CustomerService.createCustomer(inputCustomerDTO).then()
             .log().all()

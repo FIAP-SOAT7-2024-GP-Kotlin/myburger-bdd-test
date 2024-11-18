@@ -1,5 +1,5 @@
 # language: pt
-@Ignorar
+
 @CleanupAuthUserFeature
 Funcionalidade: Serviço de Autorização e Criação de Usuário
 
