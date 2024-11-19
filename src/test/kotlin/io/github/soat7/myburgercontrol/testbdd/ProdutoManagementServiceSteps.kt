@@ -149,7 +149,6 @@ class ProdutoManagementServiceSteps {
             .log().all()
             .statusCode(HttpStatus.SC_OK)
             .body("content.size()", greaterThanOrEqualTo(1))
-
     }
 
     @Quando("o usuário consultar todos os produtos cadastrados de um tipo específico")
