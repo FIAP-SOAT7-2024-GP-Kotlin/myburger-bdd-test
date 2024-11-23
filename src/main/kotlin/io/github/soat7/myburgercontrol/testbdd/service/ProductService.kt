@@ -8,6 +8,8 @@ import io.github.soat7.myburgercontrol.testbdd.util.DataSource
 import io.restassured.RestAssured.given
 import io.restassured.builder.RequestSpecBuilder
 import io.restassured.http.ContentType
+import io.restassured.module.kotlin.extensions.Given
+import io.restassured.module.kotlin.extensions.When
 
 private val log = KotlinLogging.logger { }
 
@@ -30,16 +32,20 @@ object ProductService {
             .build()
     }
 
-    fun createProduct(productDTO: ProductDTO) = given(spec)
-        .contentType(ContentType.JSON)
-        .`when`()
-        .body(config.objectMapper.writeValueAsString(productDTO))
-        .post("/products")
+    fun createProduct(productDTO: ProductDTO) = Given {
+        spec
+        contentType(ContentType.JSON)
+    } When {
+        body(config.objectMapper.writeValueAsString(productDTO))
+        post("/products")
+    }
 
-    fun getProductById(productId: String) = given(spec)
-        .contentType(ContentType.JSON)
-        .`when`()
-        .get("/products/$productId")
+    fun getProductById(productId: String) = Given {
+        spec
+        contentType(ContentType.JSON)
+    } When {
+        get("/products/$productId")
+    }
 
     fun getProducts() = given(spec)
         .contentType(ContentType.JSON)
