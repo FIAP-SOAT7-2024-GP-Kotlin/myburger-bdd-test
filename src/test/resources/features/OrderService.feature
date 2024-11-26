@@ -8,8 +8,8 @@ Funcionalidade:  Serviço de Compra de Produtos
 
   Cenário: Crie um pedido com produtos
     Quando o usuário fecha um pedido com produtos adicionados
-    Então o pedido deve ser criado e os produtos devem estar associados a ele
-    E o status do pedido deve ser "Novo"
+    Então o status do pedido deve ser "Novo"
+    E o pedido deve ser criado e os produtos devem estar associados a ele
 
   Cenário: Lista os pedidos de um cpf
     Dado que existe algum pedido associado ao CPF do usuário

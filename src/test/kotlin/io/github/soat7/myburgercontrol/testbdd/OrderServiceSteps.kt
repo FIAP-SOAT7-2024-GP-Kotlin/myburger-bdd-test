@@ -7,16 +7,20 @@ import io.cucumber.java.pt.Entao
 import io.cucumber.java.pt.Quando
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.serpro69.kfaker.faker
+import io.github.soat7.myburgercontrol.testbdd.dto.OrderCreationDTO
+import io.github.soat7.myburgercontrol.testbdd.dto.OrderItemCreationDTO
 import io.github.soat7.myburgercontrol.testbdd.dto.ProductDTO
 import io.github.soat7.myburgercontrol.testbdd.dto.ProductType
 import io.github.soat7.myburgercontrol.testbdd.dto.UserRole
 import io.github.soat7.myburgercontrol.testbdd.service.AuthService
+import io.github.soat7.myburgercontrol.testbdd.service.OrderService
 import io.github.soat7.myburgercontrol.testbdd.service.ProductService
 import io.github.soat7.myburgercontrol.testbdd.service.UserService
 import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
+import org.hamcrest.CoreMatchers.equalTo
 
 private val log = KotlinLogging.logger { }
 
@@ -41,40 +45,59 @@ class OrderServiceSteps {
                 cpf = cpf,
                 password = password,
                 userRole = UserRole.USER,
-            )
-                .then()
-                .statusCode(HttpStatus.SC_OK)
-                .extract()
-                .`as`(UserService.UserResponse::class.java)
+            ) Then {
+                statusCode(HttpStatus.SC_OK)
+            } Extract {
+                path("content")
+            }
             createdUserIds.add(createdUser.id.toString())
         }
         accessToken = AuthService.loginAccessToken(cpf, password)
         ProductService.updateAccessToken(accessToken)
+        OrderService.updateAccessToken(accessToken)
+    }
+
+    private fun getOneProductWithType(type: ProductType) = ProductService.getProductByType(type) Then {
+        statusCode(HttpStatus.SC_OK)
+    } Extract {
+        path<List<ProductDTO>>("content").first()
     }
 
     @Quando("o usuário fecha um pedido com produtos adicionados")
     fun `o usuario fecha um pedido com produtos adicionados`() {
-        val food = ProductService.getProductByType(ProductType.FOOD) Then {
-            statusCode(HttpStatus.SC_OK)
-        } Extract {
-            path<List<ProductDTO>>("content").first()
-        }
+        val food = getOneProductWithType(ProductType.FOOD)
+        val drink = getOneProductWithType(ProductType.DRINK)
 
-        val drink = ProductService.getProductByType(ProductType.DRINK) Then {
-            statusCode(HttpStatus.SC_OK)
-        } Extract {
-            path<List<ProductDTO>>("content").first()
-        }
+        val order = OrderCreationDTO(
+            customerCpf = createdUser.cpf,
+            items = listOf(
+                OrderItemCreationDTO(
+                    productId = food.id!!,
+                    price = food.price,
+                    quantity = 1,
+                ),
+                OrderItemCreationDTO(
+                    productId = drink.id!!,
+                    price = drink.price,
+                    quantity = 1,
+                ),
+            ),
+        )
 
+        response = OrderService.create(order = order)
     }
 
-    @Entao("o pedido deve ser criado e os produtos devem estar associados a ele")
-    fun `o pedido deve ser criado e os produtos devem estar associados a ele`() {
-        throw NotImplementedError()
-    }
-
-    @E("o status do pedido deve ser \"Novo\"")
+    @Entao("o status do pedido deve ser \"Novo\"")
     fun `o status do pedido deve ser Novo`() {
+        response Then {
+            log().all()
+            statusCode(HttpStatus.SC_OK)
+            body("status", equalTo())
+        }
+    }
+
+    @E("o pedido deve ser criado e os produtos devem estar associados a ele")
+    fun `o pedido deve ser criado e os produtos devem estar associados a ele`() {
         throw NotImplementedError()
     }
 
