@@ -55,7 +55,7 @@ jobs:
       - name: Get Gateway IP
         run: |
           MYBURGER_BASE_URI=$(doctl compute droplet list 'my-burger-api-gtw' --format 'Public IPv4' --no-header | head -n 1)
-          echo "MYBURGER_BASE_URI=$MYBURGER_BASE_URI" >> $GITHUB_ENV
+          echo "MYBURGER_BASE_URI=http://$MYBURGER_BASE_URI/api/v1" >> $GITHUB_ENV
 
       # Configurando e executando a app BDD
       - name: Setup Java
