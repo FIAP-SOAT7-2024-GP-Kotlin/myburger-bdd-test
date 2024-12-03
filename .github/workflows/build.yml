@@ -33,13 +33,12 @@ jobs:
       - name: Get db user and host
         run: |
           PG_DB_ID=$(doctl db list | grep pg | awk '{print $1}')
-          DATABASE_PASSWORD=$(doctl databases user get $PG_DB_ID $DATABASE_USERNAME --format Password --no-header)
-          DATABASE_URL=$(doctl databases connection $PG_DB_ID --format Host --no-header)
+          PG_DB_PASS=$(doctl databases user get $PG_DB_ID $DATABASE_USERNAME --format Password --no-header)
+          PG_DB_HOST=$(doctl databases connection $PG_DB_ID --format Host --no-header)
           PG_DB_PORT=$(doctl databases connection $PG_DB_ID --format Port --no-header)
-          echo "PG_DB_PORT"=$PG_DB_PORT >> $GITHUB_ENV
-          echo "DATABASE_URL"="jdbc:postgresql://"$DATABASE_URL:5432/my_burger >> $GITHUB_ENV
-          echo "DATABASE_PASSWORD=$DATABASE_PASSWORD" >> $GITHUB_ENV
-
+          echo "DATABASE_URL"="postgresql://"$PG_DB_HOST:$PG_DB_PORT/my_burger >> $GITHUB_ENV
+          echo "DATABASE_PASSWORD=$PG_DB_PASS" >> $GITHUB_ENV
+      #"postgresql://#PG_DB_HOST#:#PG_DB_PORT#/my_burger"
       # Armazenar o ID do primeiro cluster na variável de ambiente
       - name: Get First Cluster ID
         run: |
