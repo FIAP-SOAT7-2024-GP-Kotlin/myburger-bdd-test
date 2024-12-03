@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REPO_NAME: ${{ github.event.repository.name }}
-      DATABASE_USER: doadmin
+      DATABASE_USERNAME: doadmin
 
     steps:
       # Checkout do repositório
@@ -33,12 +33,12 @@ jobs:
       - name: Get db user and host
         run: |
           PG_DB_ID=$(doctl db list | grep pg | awk '{print $1}')
-          PG_DB_PASS=$(doctl databases user get $PG_DB_ID $DATABASE_USER --format Password --no-header)
-          PG_DB_HOST=$(doctl databases connection $PG_DB_ID --format Host --no-header)
+          DATABASE_PASSWORD=$(doctl databases user get $PG_DB_ID $DATABASE_USERNAME--format Password --no-header)
+          DATABASE_URL=$(doctl databases connection $PG_DB_ID --format Host --no-header)
           PG_DB_PORT=$(doctl databases connection $PG_DB_ID --format Port --no-header)
           echo "PG_DB_PORT"=$PG_DB_PORT >> $GITHUB_ENV
-          echo "PG_DB_HOST"=$PG_DB_HOST >> $GITHUB_ENV
-          echo "PG_DB_PASS=$PG_DB_PASS" >> $GITHUB_ENV
+          echo "DATABASE_URL"=$DATABASE_URL >> $GITHUB_ENV
+          echo "DATABASE_PASSWORD=$DATABASE_PASSWORD" >> $GITHUB_ENV
 
       # Armazenar o ID do primeiro cluster na variável de ambiente
       - name: Get First Cluster ID
@@ -54,18 +54,8 @@ jobs:
       # Recuperar o endereço do gateway
       - name: Get Gateway IP
         run: |
-          GATEWAY_IP=$(doctl compute droplet list 'my-burger-api-gtw' --format 'Public IPv4' --no-header | head -n 1)
-          echo "GATEWAY_IP=$GATEWAY_IP" >> $GITHUB_ENV
-
-      # Atualiza o arquivo env com o endereço
-      - name: Update .env file in BDD project
-        run: |
-          echo "MYBURGER_BASE_URI=${{ env.GATEWAY_IP }}/api/v1" >> ${{ env.REPO_NAME }}/.env
-          echo "API_PATH=/api/v1" >> ${{ env.REPO_NAME }}/.env
-          echo "DATABASE_URL=${{ env.PG_DB_HOST }}" >> ${{ env.REPO_NAME }}/.env
-          echo "DATABASE_USERNAME=${{ env.DATABASE_USER }}" >> ${{ env.REPO_NAME }}/.env
-          echo "DATABASE_PASSWORD=${{ env.PG_DB_PASS }}" >> ${{ env.REPO_NAME }}/.env
-          cat ${{ env.REPO_NAME }}/.env
+          MYBURGER_BASE_URI=$(doctl compute droplet list 'my-burger-api-gtw' --format 'Public IPv4' --no-header | head -n 1)
+          echo "MYBURGER_BASE_URI=$MYBURGER_BASE_URI" >> $GITHUB_ENV
 
       # Configurando e executando a app BDD
       - name: Setup Java
