@@ -61,9 +61,9 @@ jobs:
         run: |
           echo "MYBURGER_BASE_URI=${{ env.GATEWAY_IP }}" >> ${{ env.REPO_NAME }}/.env
           echo "API_PATH=/api/v1" >> ${{ env.REPO_NAME }}/.env
-          echo "DATABASE_URL=/api/v1" >> ${{ env.PG_DB_HOST }}/.env
-          echo "DATABASE_USERNAME=/api/v1" >> ${{ env.DATABASE_USER }}/.env
-          echo "DATABASE_PASSWORD=/api/v1" >> ${{ env.PG_DB_PASS }}/.env
+          echo "DATABASE_URL=${{ env.PG_DB_HOST }}" >> ${{ env.REPO_NAME }}/.env
+          echo "DATABASE_USERNAME=${{ env.DATABASE_USER }}" >> ${{ env.REPO_NAME }}/.env
+          echo "DATABASE_PASSWORD=${{ env.PG_DB_PASS }}" >> ${{ env.REPO_NAME }}/.env
           cat ${{ env.REPO_NAME }}/.env.template
           cat ${{ env.REPO_NAME }}/.env
 
