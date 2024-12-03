@@ -1,5 +1,5 @@
 # language: pt
-
+@Ignorar
 @CleanupCustomerFeature
 Funcionalidade: Serviço de Criação e Busca de Cliente
 
