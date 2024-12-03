@@ -62,6 +62,7 @@ jobs:
           echo "MYBURGER_BASE_URI=${{ env.GATEWAY_IP }}" >> ${{ env.REPO_NAME }}/.env
           echo "API_PATH=/api/v1" >> ${{ env.REPO_NAME }}/.env
 
+      # Configurando e executando a app BDD
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
