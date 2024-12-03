@@ -38,7 +38,7 @@ jobs:
           PG_DB_PORT=$(doctl databases connection $PG_DB_ID --format Port --no-header)
           echo "DATABASE_URL"="postgresql://"$PG_DB_HOST:$PG_DB_PORT/my_burger >> $GITHUB_ENV
           echo "DATABASE_PASSWORD=$PG_DB_PASS" >> $GITHUB_ENV
-      #"postgresql://#PG_DB_HOST#:#PG_DB_PORT#/my_burger"
+
       # Armazenar o ID do primeiro cluster na variável de ambiente
       - name: Get First Cluster ID
         run: |
