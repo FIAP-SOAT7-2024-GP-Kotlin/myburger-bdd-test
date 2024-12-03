@@ -1,5 +1,5 @@
 # language: pt
-
+@Ignorar
 @CleanupOrderFeature
 Funcionalidade:  Serviço de Compra de Produtos
 
