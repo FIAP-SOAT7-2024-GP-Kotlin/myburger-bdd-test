@@ -1,0 +1,77 @@
+name: CD MyBurger - BDD
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to DigitalOcean
+    runs-on: ubuntu-latest
+    env:
+      REPO_NAME: ${{ github.event.repository.name }}
+
+    steps:
+      # Checkout do repositório
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Autenticação com a DigitalOcean
+      - name: Set up DigitalOcean
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_TOKEN_ACCESS }}
+
+      # Recupera os dados de BD
+      - name: Get db user and host
+        run: |
+          PG_DB_ID=$(doctl db list | grep pg | awk '{print $1}')
+          PG_DB_PASS=$(doctl databases user get $PG_DB_ID $DATABASE_USER --format Password --no-header)
+          PG_DB_HOST=$(doctl databases connection $PG_DB_ID --format Host --no-header)
+          PG_DB_PORT=$(doctl databases connection $PG_DB_ID --format Port --no-header)
+          echo "PG_DB_PORT"=$PG_DB_PORT >> $GITHUB_ENV
+          echo "PG_DB_HOST"=$PG_DB_HOST >> $GITHUB_ENV
+          echo "PG_DB_PASS=$PG_DB_PASS" >> $GITHUB_ENV
+
+      # Armazenar o ID do primeiro cluster na variável de ambiente
+      - name: Get First Cluster ID
+        run: |
+          CLUSTER_ID=$(doctl kubernetes cluster list --format ID --no-header | head -n 1)
+          echo "CLUSTER_ID=$CLUSTER_ID" >> $GITHUB_ENV
+
+      # Autenticação com o cluster Kubernetes
+      - name: Set up Kubernetes save
+        run: |
+          doctl kubernetes cluster kubeconfig save ${{ env.CLUSTER_ID }}
+
+      # Recuperar o endereço do gateway
+      - name: Get Gateway IP
+        run: |
+          GATEWAY_IP=$(doctl compute droplet list 'my-burger-api-gtw' --format 'Public IPv4' --no-header | head -n 1)
+
+      # Atualiza o arquivo env com o endereço
+      - name: Update .env file in BDD project
+        run: |
+          echo "MYBURGER_BASE_URI=${{ env.GATEWAY_IP }}" >> ${{ env.REPO_NAME }}/.env
+          echo "API_PATH=/api/v1" >> ${{ env.REPO_NAME }}/.env
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
+
+      - name: Run build
+        run: ./gradlew clean build --no-daemon -x test
+
+      - name: Run tests
+        run: ./gradlew test --info --stacktrace
