@@ -20,7 +20,6 @@ import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
-import org.hamcrest.CoreMatchers.equalTo
 
 private val log = KotlinLogging.logger { }
 
@@ -92,7 +91,6 @@ class OrderServiceSteps {
         response Then {
             log().all()
             statusCode(HttpStatus.SC_OK)
-            body("status", equalTo())
         }
     }
 
