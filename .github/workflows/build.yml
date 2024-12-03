@@ -72,4 +72,9 @@ jobs:
           build-scan-terms-of-use-agree: "yes"
 
       - name: Run tests
+        env:
+          MYBURGER_BASE_URI: ${{ env.MYBURGER_BASE_URI }}
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          DATABASE_USERNAME: ${{ env.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ env.DATABASE_PASSWORD }}
         run: ./gradlew test --info --stacktrace
