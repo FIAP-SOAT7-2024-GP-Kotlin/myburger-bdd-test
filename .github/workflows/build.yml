@@ -59,12 +59,13 @@ jobs:
       # Atualiza o arquivo env com o endereço
       - name: Update .env file in BDD project
         run: |
-          echo "MYBURGER_BASE_URI=${{ env.GATEWAY_IP }}" >> ${{ env.REPO_NAME }}/.env.template
-          echo "API_PATH=/api/v1" >> ${{ env.REPO_NAME }}/.env.template
-          echo "DATABASE_URL=/api/v1" >> ${{ env.PG_DB_HOST }}/.env.template
-          echo "DATABASE_USERNAME=/api/v1" >> ${{ env.DATABASE_USER }}/.env.template
-          echo "DATABASE_PASSWORD=/api/v1" >> ${{ env.PG_DB_PASS }}/.env.template
+          echo "MYBURGER_BASE_URI=${{ env.GATEWAY_IP }}" >> ${{ env.REPO_NAME }}/.env
+          echo "API_PATH=/api/v1" >> ${{ env.REPO_NAME }}/.env
+          echo "DATABASE_URL=/api/v1" >> ${{ env.PG_DB_HOST }}/.env
+          echo "DATABASE_USERNAME=/api/v1" >> ${{ env.DATABASE_USER }}/.env
+          echo "DATABASE_PASSWORD=/api/v1" >> ${{ env.PG_DB_PASS }}/.env
           cat ${{ env.REPO_NAME }}/.env.template
+          cat ${{ env.REPO_NAME }}/.env
 
       # Configurando e executando a app BDD
       - name: Setup Java
