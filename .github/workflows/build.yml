@@ -24,6 +24,11 @@ jobs:
         with:
           token: ${{ secrets.DO_TOKEN_ACCESS }}
 
+      - name: Ensure .env file exists
+        run: |
+          mkdir -p myburger-bdd-test
+          touch myburger-bdd-test/.env
+
       # Recupera os dados de BD
       - name: Get db user and host
         run: |
