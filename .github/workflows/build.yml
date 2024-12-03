@@ -60,7 +60,7 @@ jobs:
       # Atualiza o arquivo env com o endereço
       - name: Update .env file in BDD project
         run: |
-          echo "MYBURGER_BASE_URI=${{ env.GATEWAY_IP }}" >> ${{ env.REPO_NAME }}/.env
+          echo "MYBURGER_BASE_URI=${{ env.GATEWAY_IP }}/api/v1" >> ${{ env.REPO_NAME }}/.env
           echo "API_PATH=/api/v1" >> ${{ env.REPO_NAME }}/.env
           echo "DATABASE_URL=${{ env.PG_DB_HOST }}" >> ${{ env.REPO_NAME }}/.env
           echo "DATABASE_USERNAME=${{ env.DATABASE_USER }}" >> ${{ env.REPO_NAME }}/.env
