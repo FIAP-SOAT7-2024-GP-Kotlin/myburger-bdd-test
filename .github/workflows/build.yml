@@ -64,7 +64,6 @@ jobs:
           echo "DATABASE_URL=${{ env.PG_DB_HOST }}" >> ${{ env.REPO_NAME }}/.env
           echo "DATABASE_USERNAME=${{ env.DATABASE_USER }}" >> ${{ env.REPO_NAME }}/.env
           echo "DATABASE_PASSWORD=${{ env.PG_DB_PASS }}" >> ${{ env.REPO_NAME }}/.env
-          cat ${{ env.REPO_NAME }}/.env.template
           cat ${{ env.REPO_NAME }}/.env
 
       # Configurando e executando a app BDD
