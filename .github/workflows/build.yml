@@ -55,7 +55,7 @@ jobs:
       - name: Get Gateway IP
         run: |
           GATEWAY_IP=$(doctl compute droplet list 'my-burger-api-gtw' --format 'Public IPv4' --no-header | head -n 1)
-          echo "GATEWAY_IP=GATEWAY_IP" >> $GITHUB_ENV
+          echo "GATEWAY_IP=$GATEWAY_IP" >> $GITHUB_ENV
 
       # Atualiza o arquivo env com o endereço
       - name: Update .env file in BDD project
