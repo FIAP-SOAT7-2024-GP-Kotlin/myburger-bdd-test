@@ -35,7 +35,7 @@ object UserService {
     fun isUserCreated(cpf: String): Boolean {
         log.info { "Check if user with CPF $cpf exists" }
         DataSource.connection().use { conn ->
-            conn.prepareStatement("SELECT COUNT(*) FROM myburguer.user WHERE cpf = ?")
+            conn.prepareStatement("SELECT COUNT(*) FROM myburguer_user.user WHERE cpf = ?")
                 .use { stmt ->
                     stmt.setString(1, cpf)
                     stmt.executeQuery().use { rs ->
@@ -76,7 +76,7 @@ object UserService {
     fun deleteUsers(userIds: Collection<String>) {
         log.info { "Delete Users size: ${userIds.size}" }
         DataSource.connection().use { conn ->
-            conn.prepareStatement("DELETE FROM myburguer.user WHERE id = ANY (?)")
+            conn.prepareStatement("DELETE FROM myburguer_user.user WHERE id = ANY (?)")
                 .use { stmt ->
                     stmt.setArray(1, conn.createArrayOf("uuid", userIds.toTypedArray()))
                     stmt.execute()
