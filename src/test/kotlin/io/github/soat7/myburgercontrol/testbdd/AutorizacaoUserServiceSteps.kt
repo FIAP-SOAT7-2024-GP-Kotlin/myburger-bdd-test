@@ -66,6 +66,7 @@ class AutorizacaoUserServiceSteps {
     fun `que o usuario existe no banco de dados`() {
         if (!UserService.isUserCreated(cpf)) {
             UserService.updateAccessToken(null)
+            println("updateAccessToken DO CALALHO ")
             createdUser = userService.createUser(
                 cpf = cpf,
                 password = password,
