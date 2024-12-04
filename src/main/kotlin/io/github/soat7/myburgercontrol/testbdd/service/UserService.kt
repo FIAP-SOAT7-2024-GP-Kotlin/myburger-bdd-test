@@ -17,7 +17,7 @@ private val log = KotlinLogging.logger { }
 object UserService {
     private val config = Configuration
     private var spec = RequestSpecBuilder()
-        .setBaseUri(config["https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-40807b32-b98c-439f-8bd7-99d62dcc3994/authentication/authenticate"])
+        .setBaseUri(config["myburger.baseUri"])
         .build()
 
     fun updateAccessToken(accessToken: String?) {
