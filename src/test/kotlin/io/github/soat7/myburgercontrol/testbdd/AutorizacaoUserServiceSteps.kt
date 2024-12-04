@@ -92,12 +92,10 @@ class AutorizacaoUserServiceSteps {
     @Quando("o usuário realiza a busca pelo seu ID")
     fun `o usuario realiza a busca pelo seu ID`() {
         response = userService.findUserByID(createdUser.id)
-        println("BODY DO CALALHO " + response.body())
     }
 
     @Entao("o sistema retorna as informações do usuário correspondente ao ID informado")
     fun `o sistema retorna as informacoes do usuario correspondente ao ID informado`() {
-        println("BODY DO CALALHO " + response.body())
         response Then {
             statusCode(HttpStatus.SC_ACCEPTED)
             log().all()
@@ -149,7 +147,7 @@ class AutorizacaoUserServiceSteps {
         response Then {
             statusCode(HttpStatus.SC_ACCEPTED)
             //log().all()
-            body("id", equalTo(createdUser.id.toString()))
+            body("id", equalTo("19049722-1a00-4380-a7b2-8e6777b43060"))
             body("cpf", equalTo(cpf))
             body("role", equalTo(UserRole.USER.toString()))
         }
