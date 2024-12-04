@@ -24,7 +24,7 @@ class AutorizacaoUserServiceSteps {
 
     private val userService = UserService
 
-    private val cpf = "11111111111"
+    private val cpf = "123"
     private val password = "123"
     private val unExistingUserUUID = UUID.randomUUID()
 
