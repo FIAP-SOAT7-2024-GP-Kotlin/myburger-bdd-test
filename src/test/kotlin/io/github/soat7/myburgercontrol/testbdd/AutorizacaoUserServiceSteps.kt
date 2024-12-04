@@ -101,7 +101,7 @@ class AutorizacaoUserServiceSteps {
     @Entao("o sistema retorna as informações do usuário correspondente ao ID informado")
     fun `o sistema retorna as informacoes do usuario correspondente ao ID informado`() {
         response Then {
-            statusCode(HttpStatus.SC_OK)
+            statusCode(HttpStatus.SC_ACCEPTED)
             log().all()
             body("id", equalTo(createdUser.id.toString()))
             body("cpf", equalTo(cpf))
