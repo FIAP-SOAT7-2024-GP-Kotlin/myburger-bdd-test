@@ -5,16 +5,16 @@ Funcionalidade: Serviço de Autorização e Criação de Usuário
 
   # Cenários de criação de usuários e buscas
 
-  Cenário: Criar usuário com sucesso
-    Quando o usuário se cadastrar com um email válido e uma senha forte
-    Então o sistema cria um novo usuário com as informações fornecidas
+#  Cenário: Criar usuário com sucesso
+#    Quando o usuário se cadastrar com um email válido e uma senha forte
+#    Então o sistema cria um novo usuário com as informações fornecidas
 
 
-#  Cenário: Buscar usuário por ID
-#    Dado que o usuário existe no banco de dados
-#    Quando o usuário realiza a busca pelo seu ID
-#    Então o sistema retorna as informações do usuário correspondente ao ID informado
-#
+  Cenário: Buscar usuário por ID
+    Dado que o usuário existe no banco de dados
+    Quando o usuário realiza a busca pelo seu ID
+    Então o sistema retorna as informações do usuário correspondente ao ID informado
+
 #  Cenário: Buscar usuário inexistente por ID
 #    Dado que o usuário não existe no banco de dados
 #    Quando o usuário realiza a busca por um ID inexistente
