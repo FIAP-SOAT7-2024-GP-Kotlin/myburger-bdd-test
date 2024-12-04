@@ -17,7 +17,7 @@ object AuthService {
         .build()
 
     fun loginAccessToken(cpf: String, password: String): String = loginCall(cpf, password) Then {
-        statusCode(202)
+        statusCode(200)
         log().all() // Log the response for debugging purposes
     } Extract {
         path("access_token")

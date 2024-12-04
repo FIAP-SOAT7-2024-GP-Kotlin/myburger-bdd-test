@@ -61,7 +61,12 @@ object UserService {
         spec(spec)
     } When {
         contentType(ContentType.JSON)
-        queryParam("cpf", cpf)
+        body(
+            mapOf(
+                "Cpf" to cpf,
+                "Type" to "GET_USER"
+            )
+        )
         get("/users")
     }
 
