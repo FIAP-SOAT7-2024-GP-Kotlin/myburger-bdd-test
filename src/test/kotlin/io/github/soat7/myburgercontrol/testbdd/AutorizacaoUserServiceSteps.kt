@@ -87,7 +87,7 @@ class AutorizacaoUserServiceSteps {
 
         println("TOKEN DO CALALHO $accessToken")
         createdUser = userService.findUserByCpf(cpf) Then {
-            statusCode(HttpStatus.SC_OK)
+            statusCode(HttpStatus.SC_ACCEPTED)
         } Extract {
             path("content")
         }
