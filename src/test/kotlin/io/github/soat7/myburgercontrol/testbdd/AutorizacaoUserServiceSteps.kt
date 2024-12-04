@@ -77,15 +77,14 @@ class AutorizacaoUserServiceSteps {
             } Extract {
                 path("content")
             }
-            println("ESTE USUARIO NÂO EXISTE CALALHO " + createdUser.id.toString())
             createdUserIds.add(createdUser.id.toString())
         }
 
-        println("TOKEN DO CALALHO ")
         accessToken = AuthService.loginAccessToken(cpf, password)
         UserService.updateAccessToken(accessToken)
 
         println("TOKEN DO CALALHO $accessToken")
+
         createdUser = userService.findUserByCpf(cpf) Then {
             statusCode(HttpStatus.SC_ACCEPTED)
         } Extract {
@@ -96,6 +95,7 @@ class AutorizacaoUserServiceSteps {
     @Quando("o usuário realiza a busca pelo seu ID")
     fun `o usuario realiza a busca pelo seu ID`() {
         response = userService.findUserByID(createdUser.id)
+        println("BODY DO CALALHO " + response.body())
     }
 
     @Entao("o sistema retorna as informações do usuário correspondente ao ID informado")
