@@ -79,7 +79,7 @@ class AutorizacaoUserServiceSteps {
         }
 
         accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzMyNzU0MDIsInN1YiI6IjEyMyJ9.GmGtkWLZahfmI-wJHlcC_aiijzk0p-I6Cvsr7Gw76wI"//AuthService.loginAccessToken(cpf, password)
-        UserService.updateAccessToken(accessToken)
+        //UserService.updateAccessToken(accessToken)
 
         createdUser = userService.findUserByCpf(cpf) Then {
             statusCode(HttpStatus.SC_ACCEPTED)
