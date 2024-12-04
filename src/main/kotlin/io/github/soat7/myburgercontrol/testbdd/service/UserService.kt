@@ -67,7 +67,7 @@ object UserService {
                 "Type" to "GET_USER"
             )
         )
-        get("/users")
+        get("/auth")
     }
 
     fun findUserByID(id: UUID): Response = Given {
