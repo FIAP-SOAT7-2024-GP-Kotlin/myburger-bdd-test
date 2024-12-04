@@ -65,7 +65,6 @@ class AutorizacaoUserServiceSteps {
     @Dado("que o usuário existe no banco de dados")
     fun `que o usuario existe no banco de dados`() {
         if (!UserService.isUserCreated(cpf)) {
-            println("ESTE USUARIO NÂO EXISTE CALALHO")
             UserService.updateAccessToken(null)
             createdUser = userService.createUser(
                 cpf = cpf,
@@ -76,12 +75,15 @@ class AutorizacaoUserServiceSteps {
             } Extract {
                 path("content")
             }
+            println("ESTE USUARIO NÂO EXISTE CALALHO " + createdUser.id.toString())
             createdUserIds.add(createdUser.id.toString())
         }
 
+        println("TOKEN DO CALALHO ")
         accessToken = AuthService.loginAccessToken(cpf, password)
         UserService.updateAccessToken(accessToken)
 
+        println("TOKEN DO CALALHO $accessToken")
         createdUser = userService.findUserByCpf(cpf) Then {
             statusCode(HttpStatus.SC_OK)
         } Extract {
