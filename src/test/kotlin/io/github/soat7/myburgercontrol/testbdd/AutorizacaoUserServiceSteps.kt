@@ -66,8 +66,6 @@ class AutorizacaoUserServiceSteps {
     fun `que o usuario existe no banco de dados`() {
         if (!UserService.isUserCreated(cpf)) {
             UserService.updateAccessToken(null)
-            UserService.findUserByID(UUID.fromString("19049722-1a00-4380-a7b2-8e6777b43060"))
-            println("updateAccessToken DO CALALHO ")
             createdUser = userService.createUser(
                 cpf = cpf,
                 password = password,
@@ -80,10 +78,8 @@ class AutorizacaoUserServiceSteps {
             createdUserIds.add(createdUser.id.toString())
         }
 
-        accessToken = AuthService.loginAccessToken(cpf, password)
+        accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzMyNzU0MDIsInN1YiI6IjEyMyJ9.GmGtkWLZahfmI-wJHlcC_aiijzk0p-I6Cvsr7Gw76wI"//AuthService.loginAccessToken(cpf, password)
         UserService.updateAccessToken(accessToken)
-
-        println("TOKEN DO CALALHO $accessToken")
 
         createdUser = userService.findUserByCpf(cpf) Then {
             statusCode(HttpStatus.SC_ACCEPTED)
