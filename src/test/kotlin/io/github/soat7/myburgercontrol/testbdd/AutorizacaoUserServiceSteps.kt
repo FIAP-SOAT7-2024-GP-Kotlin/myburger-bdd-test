@@ -147,7 +147,7 @@ class AutorizacaoUserServiceSteps {
     fun `o sistema retorna as informacoes do usuario correspondente ao CPF informado`() {
         response Then {
             statusCode(HttpStatus.SC_OK)
-            log().all()
+            //log().all()
             body("id", equalTo(createdUser.id.toString()))
             body("cpf", equalTo(cpf))
             body("role", equalTo(UserRole.USER.toString()))
