@@ -55,6 +55,7 @@ class PaymentServiceSteps {
     fun `o sistema deve retornar as informações de solicitação com o status recebido`(){
         response Then {
             statusCode(HttpStatus.SC_OK)
+
             body("status", equalTo("REQUESTED"))
         }
     }
