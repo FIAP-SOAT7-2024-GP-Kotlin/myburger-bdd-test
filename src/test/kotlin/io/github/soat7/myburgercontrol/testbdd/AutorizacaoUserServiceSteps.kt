@@ -86,7 +86,6 @@ class AutorizacaoUserServiceSteps {
         } Extract {
             path("content")
         }
-        println("CALALHO $createdUser")
     }
 
     @Quando("o usuário realiza a busca pelo seu ID")
