@@ -73,7 +73,7 @@ class AutorizacaoUserServiceSteps {
                 password = password,
                 userRole = UserRole.USER,
             ) Then {
-                statusCode(HttpStatus.SC_OK)
+                statusCode(HttpStatus.SC_ACCEPTED)
             } Extract {
                 path("content")
             }
@@ -100,6 +100,7 @@ class AutorizacaoUserServiceSteps {
 
     @Entao("o sistema retorna as informações do usuário correspondente ao ID informado")
     fun `o sistema retorna as informacoes do usuario correspondente ao ID informado`() {
+        println("BODY DO CALALHO " + response.body())
         response Then {
             statusCode(HttpStatus.SC_ACCEPTED)
             log().all()
