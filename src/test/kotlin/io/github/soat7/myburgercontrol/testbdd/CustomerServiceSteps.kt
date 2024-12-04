@@ -11,6 +11,8 @@ import io.github.soat7.myburgercontrol.testbdd.dto.UserRole
 import io.github.soat7.myburgercontrol.testbdd.service.AuthService
 import io.github.soat7.myburgercontrol.testbdd.service.CustomerService
 import io.github.soat7.myburgercontrol.testbdd.service.UserService
+import io.restassured.module.kotlin.extensions.Extract
+import io.restassured.module.kotlin.extensions.Then
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
 import org.assertj.core.api.Assertions.assertThat
@@ -43,11 +45,11 @@ class CustomerServiceSteps {
                 cpf = cpf,
                 password = password,
                 userRole = UserRole.ADMIN,
-            )
-                .then()
-                .statusCode(HttpStatus.SC_OK)
-                .extract()
-                .`as`(UserService.UserResponse::class.java)
+            ) Then {
+                statusCode(HttpStatus.SC_OK)
+            } Extract {
+                path("content")
+            }
             createdUserIds.add(createdUser.id.toString())
         }
         accessToken = AuthService.loginAccessToken(cpf, password)
@@ -66,11 +68,12 @@ class CustomerServiceSteps {
 
     @Entao("o sistema deve criar um novo cliente com os dados fornecidos")
     fun `o sistema deve criar um novo cliente com os dados fornecidos`() {
-        val createdCustomer = response.then()
-            .log().all()
-            .statusCode(HttpStatus.SC_OK)
-            .extract()
-            .`as`(CustomerDTO::class.java)
+        val createdCustomer = response Then {
+            statusCode(HttpStatus.SC_OK)
+            log().all()
+        } Extract {
+            path<CustomerDTO>("content")
+        }
 
         assertThat(createdCustomer).isNotNull
         assertThat(createdCustomer.cpf).isEqualTo(inputCustomerDTO.cpf)
@@ -87,11 +90,12 @@ class CustomerServiceSteps {
             name = faker.name.name(),
             email = faker.internet.email(),
         )
-        val createdCustomer = CustomerService.createCustomer(inputCustomerDTO).then()
-            .log().all()
-            .statusCode(HttpStatus.SC_OK)
-            .extract()
-            .`as`(CustomerDTO::class.java)
+        val createdCustomer = CustomerService.createCustomer(inputCustomerDTO) Then {
+            statusCode(HttpStatus.SC_OK)
+            log().all()
+        } Extract {
+            path<CustomerDTO>("content")
+        }
         createdCustomersIds.add(createdCustomer.id.toString())
     }
 
@@ -102,13 +106,14 @@ class CustomerServiceSteps {
 
     @Entao("o sistema deve retornar as informações do cliente correspondente")
     fun `o sistema deve retornar as informacoes do cliente correspondentes ao ID fornecido`() {
-        response.then()
-            .log().all()
-            .statusCode(HttpStatus.SC_OK)
-            .body("id", equalTo(createdCustomersIds.first()))
-            .body("cpf", equalTo(inputCustomerDTO.cpf))
-            .body("name", equalTo(inputCustomerDTO.name))
-            .body("email", equalTo(inputCustomerDTO.email))
+        response Then {
+            log().all()
+            statusCode(HttpStatus.SC_OK)
+            body("id", equalTo(createdCustomersIds.first()))
+            body("cpf", equalTo(inputCustomerDTO.cpf))
+            body("name", equalTo(inputCustomerDTO.name))
+            body("email", equalTo(inputCustomerDTO.email))
+        }
     }
 
     @Quando("o usuário busca um cliente pelo seu CPF")
@@ -123,9 +128,10 @@ class CustomerServiceSteps {
 
     @Entao("o sistema deve retornar cliente não encontrado")
     fun `o sistema deve retornar cliente nao encontrado`() {
-        response.then()
-            .log().all()
-            .statusCode(HttpStatus.SC_NOT_FOUND)
+        response Then {
+            log().all()
+            statusCode(HttpStatus.SC_NOT_FOUND)
+        }
     }
 
     @After("@CleanupCustomerFeature")

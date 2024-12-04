@@ -13,6 +13,8 @@ import io.github.soat7.myburgercontrol.testbdd.dto.UserRole
 import io.github.soat7.myburgercontrol.testbdd.service.AuthService
 import io.github.soat7.myburgercontrol.testbdd.service.ProductService
 import io.github.soat7.myburgercontrol.testbdd.service.UserService
+import io.restassured.module.kotlin.extensions.Extract
+import io.restassured.module.kotlin.extensions.Then
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
 import org.assertj.core.api.Assertions.assertThat
@@ -51,11 +53,11 @@ class ProdutoManagementServiceSteps {
                 cpf = cpf,
                 password = password,
                 userRole = UserRole.ADMIN,
-            )
-                .then()
-                .statusCode(HttpStatus.SC_OK)
-                .extract()
-                .`as`(UserService.UserResponse::class.java)
+            ) Then {
+                statusCode(HttpStatus.SC_OK)
+            } Extract {
+                path("content")
+            }
             createdUserIds.add(createdUser.id.toString())
         }
         accessToken = AuthService.loginAccessToken(cpf, password)
@@ -75,11 +77,12 @@ class ProdutoManagementServiceSteps {
 
     @Entao("o sistema deve retornar uma mensagem de sucesso informando que o produto foi cadastrado com sucesso")
     fun `o sistema deve retornar uma mensagem de sucesso informando que o produto foi cadastrado com sucesso`() {
-        val product = response.then()
-            .log().all()
-            .statusCode(HttpStatus.SC_OK)
-            .extract()
-            .`as`(ProductDTO::class.java)
+        val product = response Then {
+            log().all()
+            statusCode(HttpStatus.SC_OK)
+        } Extract {
+            path<ProductDTO>("content")
+        }
 
         assertThat(product.name).isEqualTo(inputProduct.name)
         assertThat(product.description).isEqualTo(inputProduct.description)
@@ -97,12 +100,12 @@ class ProdutoManagementServiceSteps {
             type = ProductType.entries.toTypedArray().random(),
             price = faker.random.nextDouble().let { it * 100 }.toBigDecimal().setScale(2, RoundingMode.HALF_UP),
         )
-        val productDTO = ProductService.createProduct(inputProduct)
-            .then()
-            .log().all()
-            .statusCode(HttpStatus.SC_OK)
-            .extract()
-            .`as`(ProductDTO::class.java)
+        val productDTO = ProductService.createProduct(inputProduct) Then {
+            log().all()
+            statusCode(HttpStatus.SC_OK)
+        } Extract {
+            path<ProductDTO>("content")
+        }
 
         createdProductIds.add(productDTO.id.toString())
     }
@@ -114,15 +117,15 @@ class ProdutoManagementServiceSteps {
 
     @Entao("o sistema deve retornar as informações do produto")
     fun `o sistema deve retornar as informacoes do produto`() {
-        response
-            .then()
-            .log().all()
-            .statusCode(HttpStatus.SC_OK)
-            .body("id", notNullValue())
-            .body("name", equalTo(inputProduct.name))
-            .body("description", equalTo(inputProduct.description))
-            .body("price", equalTo(inputProduct.price.toFloat()))
-            .body("type", equalTo(inputProduct.type.name))
+        response Then {
+            log().all()
+            statusCode(HttpStatus.SC_OK)
+            body("id", notNullValue())
+            body("name", equalTo(inputProduct.name))
+            body("description", equalTo(inputProduct.description))
+            body("price", equalTo(inputProduct.price.toFloat()))
+            body("type", equalTo(inputProduct.type.name))
+        }
     }
 
     @Quando("o usuário consultar as informações de um produto inexistente")
@@ -132,9 +135,9 @@ class ProdutoManagementServiceSteps {
 
     @Entao("o sistema deve retornar uma mensagem de erro informando que o produto não foi encontrado")
     fun `o sistema deve retornar uma mensagem de erro informando que o produto nao foi encontrado`() {
-        response
-            .then()
-            .statusCode(HttpStatus.SC_NOT_FOUND)
+        response Then {
+            statusCode(HttpStatus.SC_NOT_FOUND)
+        }
     }
 
     @Quando("o usuário consultar todos os produtos cadastrados")
@@ -144,11 +147,11 @@ class ProdutoManagementServiceSteps {
 
     @Entao("o sistema deve retornar uma lista com todos os produtos cadastrados")
     fun `o sistema deve retornar uma lista com todos os produtos cadastrados`() {
-        response
-            .then()
-            .log().all()
-            .statusCode(HttpStatus.SC_OK)
-            .body("content.size()", greaterThanOrEqualTo(1))
+        response Then {
+            log().all()
+            statusCode(HttpStatus.SC_OK)
+            body("content.size()", greaterThanOrEqualTo(1))
+        }
     }
 
     @Quando("o usuário consultar todos os produtos cadastrados de um tipo específico")
@@ -158,11 +161,11 @@ class ProdutoManagementServiceSteps {
 
     @Entao("o sistema deve retornar uma lista com todos os produtos cadastrados do tipo específico")
     fun `o sistema deve retornar uma lista com todos os produtos cadastrados do tipo especifico`() {
-        response
-            .then()
-            .log().all()
-            .statusCode(HttpStatus.SC_OK)
-            .body("size()", greaterThanOrEqualTo(1))
+        response Then {
+            log().all()
+            statusCode(HttpStatus.SC_OK)
+            body("size()", greaterThanOrEqualTo(1))
+        }
     }
 
     @Quando("o usuário excluir o produto")
@@ -172,10 +175,10 @@ class ProdutoManagementServiceSteps {
 
     @Entao("o sistema deve retornar uma mensagem de sucesso informando que o produto foi excluído com sucesso")
     fun `o sistema deve retornar uma mensagem de sucesso informando que o produto foi excluido com sucesso`() {
-        response
-            .then()
-            .log().all()
-            .statusCode(HttpStatus.SC_NO_CONTENT)
+        response Then {
+            log().all()
+            statusCode(HttpStatus.SC_NO_CONTENT)
+        }
     }
 
     @Quando("o usuário excluir um produto inexistente")
